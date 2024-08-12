@@ -1,0 +1,27 @@
+#!/bin/bash
+set -eu -o pipefail
+
+cat << EOF > /etc/nginx/conf.d/default.conf
+server {
+	listen 80;
+	location / {
+		root						/usr/share/nginx/html;
+		index						index.html index.htm;
+	}
+	
+	location /protected {
+		root						/usr/share/nginx/html;
+		index						index.html index.htm;
+		
+		satisfy						all;
+		
+		auth_basic					"Administrator's Area";
+		auth_basic_user_file		/mkdocker/docs/example/.htpasswd;
+	}
+
+	error_page	500 502 503 504		/50x.html;
+	location = /50x.html {
+		root						/usr/share/nginx/html;
+	}
+}
+EOF
