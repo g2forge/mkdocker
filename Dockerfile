@@ -11,11 +11,12 @@ RUN apk add --no-cache \
 ENV MKDOCKER_REPOSITORY_URL github.com/g2forge/mkdocker
 ENV MKDOCKER_REPOSITORY_BRANCH main
 ENV MKDOCKER_REPOSITORY_DIRECTORY example
+ENV MKDOCKER_LOCAL_DIRECTORY /mkdocker/docs
 
 EXPOSE 80
 
-RUN mkdir -pv /mkdocker/scripts && mkdir -pv /mkdocker/docs
-COPY mkdocker/scripts/mkdocker.sh /mkdocker/scripts/mkdocker.sh
+RUN mkdir -pv /mkdocker
+COPY mkdocker /mkdocker/
 RUN dos2unix /mkdocker/scripts/mkdocker.sh && chmod +x /mkdocker/scripts/mkdocker.sh
 
 CMD /mkdocker/scripts/mkdocker.sh
