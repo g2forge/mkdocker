@@ -16,7 +16,13 @@ else
 fi
 
 cd "${MKDOCKER_REPOSITORY_DIRECTORY}"
+echo "----------"
+echo "Current directory: $(pwd)"
+echo "Directory listing:"
+ls -alR ./
+echo "----------"
 
+echo "Running build"
 if [ -x scripts/pre ]; then
 	echo Running pre script
 	./scripts/pre
