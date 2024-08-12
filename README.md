@@ -24,6 +24,12 @@ docker run -d --mount type=bind,source=${pwd},target=/mkdocker/docs --publish 12
 * `MKDOCKER_REPOSITORY_DIRECTORY` - The subdirectory in the git repository to run the build in (default: `example`)
 * `MKDOCKER_LOCAL_DIRECTORY` - The directory inside the docker container to clone the repository in to, or to just use if already mounted (default `/mkdocker/docs`)
 
+## Scripts
+
+mkdocker can run scripts both before and after the mkdocs build.
+Simply create `scripts/pre` and `scripts/post` files in the `MKDOCKER_REPOSITORY_DIRECTORY` directory, and mark them executable.
+One example of this is shown in this repository to created [protected pages](example/scripts/post) by modifying the nginx config.
+
 # Development
 
 * Build -   `docker build ./ -t mkdocker:latest`
