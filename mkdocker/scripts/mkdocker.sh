@@ -16,7 +16,21 @@ else
 fi
 
 cd "${MKDOCKER_REPOSITORY_DIRECTORY}"
-if [ -x scripts/pre ]; then ./scripts/pre; fi
+echo "----------"
+echo "Current directory: $(pwd)"
+echo "Directory listing:"
+ls -alR ./
+echo "----------"
+
+echo "Running build"
+if [ -x scripts/pre ]; then
+	echo Running pre script
+	./scripts/pre
+fi
 mkdocs build -d /usr/share/nginx/html
-if [ -x scripts/post ]; then ./scripts/post; fi
+if [ -x scripts/post ]; then
+	echo Running post script
+	./scripts/post
+fi
+
 nginx -g "daemon off;"
