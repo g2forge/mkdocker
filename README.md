@@ -24,7 +24,7 @@ docker run -d --mount type=bind,source=${pwd},target=/mkdocker/docs --publish 12
 * `MKDOCKER_REPOSITORY_DIRECTORY` - The subdirectory in the git repository to run the build in (default: `example`)
 * `MKDOCKER_LOCAL_DIRECTORY` - The directory inside the docker container to clone the repository in to, or to just use if already mounted (default: `/mkdocker/docs`)
 * `MKDOCKER_VENV_DIRECTORY` - The directory inside the docker container to use for the python virtual environment (default: `/mkdocker/venv`). This is only necessary if a `requirements.txt` is present, and can optionally be mounted to a docker volume for persistence.
-
+* `MKDOCKER_SERVE` - A boolean flag to enable `mkdocs serve` if set to `1` (default: `0`)
 
 ## Scripts
 
