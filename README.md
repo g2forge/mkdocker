@@ -20,11 +20,17 @@ docker run -d --mount type=bind,source=${pwd},target=/mkdocker/docs --publish 12
 ## Environment Variables
 
 * `MKDOCKER_REPOSITORY_URL` - The git repository to clone, without the protocol (default: `github.com/g2forge/mkdocker`)
+* `MKDOCKER_REPOSITORY_LOGIN` - A login (`username:password` or `github_PAT`) for the repository (default: none)
 * `MKDOCKER_REPOSITORY_BRANCH` - The branch in the git repository to build (default: `main`)
 * `MKDOCKER_REPOSITORY_DIRECTORY` - The subdirectory in the git repository to run the build in (default: `example`)
 * `MKDOCKER_LOCAL_DIRECTORY` - The directory inside the docker container to clone the repository in to, or to just use if already mounted (default: `/mkdocker/docs`)
 * `MKDOCKER_VENV_DIRECTORY` - The directory inside the docker container to use for the python virtual environment (default: `/mkdocker/venv`). This is only necessary if a `requirements.txt` is present, and can optionally be mounted to a docker volume for persistence.
 * `MKDOCKER_SERVE` - A boolean flag to enable `mkdocs serve` if set to `1` (default: `0`)
+
+## Requirements
+
+While the standard mkdocs and mkdocs-material packages are already installed, you can require other python packages by creating a `requirements.txt` in the repository directory.
+If this file exists, a virtual environment will be created, and any packages will be installed in it.
 
 ## Scripts
 
