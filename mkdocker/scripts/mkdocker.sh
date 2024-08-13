@@ -18,9 +18,18 @@ fi
 cd "${MKDOCKER_REPOSITORY_DIRECTORY}"
 echo "----------"
 echo "Current directory: $(pwd)"
-echo "Directory listing:"
-ls -alR ./
 echo "----------"
+
+if [ -f requirements.txt ]; then
+	if [ ! -d "${MKDOCKER_VENV_DIRECTORY}" ] || [ -z "$(ls -A "${MKDOCKER_VENV_DIRECTORY}")" ]; then
+		echo "Creating virtual environment"
+		python3 -m venv "${MKDOCKER_VENV_DIRECTORY}"
+	fi
+	echo "Activating virtual environment"
+	. "${MKDOCKER_VENV_DIRECTORY}/bin/activate"
+	echo "Installing python requirements"
+	pip install -r requirements.txt
+fi
 
 echo "Running build"
 if [ -x scripts/pre ]; then
@@ -31,6 +40,11 @@ mkdocs build -d /usr/share/nginx/html
 if [ -x scripts/post ]; then
 	echo Running post script
 	./scripts/post
+fi
+
+if [ -d "${MKDOCKER_VENV_DIRECTORY}" ]; then
+	echo "Deactivating virtual environment"
+	deactivate
 fi
 
 nginx -g "daemon off;"
