@@ -8,7 +8,13 @@ if [ ! -d "${MKDOCKER_LOCAL_DIRECTORY}" ]; then
 	if [ -d .git ]; then
 		git pull
 	else
-		git clone "https://${MKDOCKER_REPOSITORY_URL}" .
+		if [ $MKDOCKER_REPOSITORY_LOGIN ]; then
+			echo "Login specified"
+			git clone "https://${MKDOCKER_REPOSITORY_LOGIN}@${MKDOCKER_REPOSITORY_URL}" .
+		else
+			echo "Login not specified"
+			git clone "https://${MKDOCKER_REPOSITORY_URL}" .
+		fi;
 		git checkout "${MKDOCKER_REPOSITORY_BRANCH}"
 	fi
 else
