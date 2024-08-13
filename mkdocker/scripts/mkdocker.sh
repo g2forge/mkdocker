@@ -36,15 +36,19 @@ if [ -x scripts/pre ]; then
 	echo Running pre script
 	./scripts/pre
 fi
-mkdocs build -d /usr/share/nginx/html
-if [ -x scripts/post ]; then
-	echo Running post script
-	./scripts/post
+if [ "${MKDOCKER_SERVE}" = 0 ]; then
+	mkdocs build -d /usr/share/nginx/html
+	if [ -x scripts/post ]; then
+		echo Running post script
+		./scripts/post
+	fi
+	
+	if [ -d "${MKDOCKER_VENV_DIRECTORY}" ]; then
+		echo "Deactivating virtual environment"
+		deactivate
+	fi
+	
+	nginx -g "daemon off;"
+else
+	mkdocs serve -a "0.0.0.0:80"
 fi
-
-if [ -d "${MKDOCKER_VENV_DIRECTORY}" ]; then
-	echo "Deactivating virtual environment"
-	deactivate
-fi
-
-nginx -g "daemon off;"
