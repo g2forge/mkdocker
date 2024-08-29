@@ -38,6 +38,22 @@ mkdocker can run scripts both before and after the mkdocs build.
 Simply create `scripts/pre` and `scripts/post` files in the `MKDOCKER_REPOSITORY_DIRECTORY` directory, and mark them executable.
 One example of this is shown in this repository to created [protected pages](example/scripts/post) by modifying the nginx config.
 
+## Control File
+
+Each script takes two arguments: the path to a temp directory for use by the scripts, and the path to the control file.
+The `pre` script should create this file, and both mkdocker and the `post` script will consume it.
+If the `pre` script does not exist or does not create the file, mkdocker will.
+
+Each line of the control file represents a separate mkdocs build, though only the last build will be served when `MKDOCKER_SERVE` is set all will be built.
+Each line specifies a repository-relative or absolute path for the source, and a HTTP root relative path for the destination separated by a space (using bash quoting).
+`mkdocs` will be run once per line.
+
+The default control file is:
+
+```
+. .
+```
+
 # Development
 
 * Build -   `docker build ./ -t mkdocker:latest`
