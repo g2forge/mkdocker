@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eu -o pipefail
 
+SCRIPT_TEMP="${MKDOCKER_TEMP_DIRECTORY}/script-temp"
+mkdir -pv "${SCRIPT_TEMP}"
+
 if [ ! -d "${MKDOCKER_LOCAL_DIRECTORY}" ]; then
 	mkdir -pv "${MKDOCKER_LOCAL_DIRECTORY}"
 	cd "${MKDOCKER_LOCAL_DIRECTORY}"
@@ -40,13 +43,32 @@ fi
 echo "Running build"
 if [ -x scripts/pre ]; then
 	echo Running pre script
-	./scripts/pre
+	./scripts/pre "${SCRIPT_TEMP}" "${MKDOCKER_TEMP_DIRECTORY}/control"
 fi
+
+if [ ! -f "${MKDOCKER_TEMP_DIRECTORY}/control" ]; then
+	cat << EOF > "${MKDOCKER_TEMP_DIRECTORY}/control"
+. .
+EOF
+fi
+# For all but the last site, build them
+while read -r SOURCE TARGET; do
+	echo "Building ${SOURCE} to ${TARGET}"
+	pushd "${SOURCE}"
+	mkdocs build -d "/usr/share/nginx/html/${TARGET}"
+	popd
+done < <(head -n -1 "${MKDOCKER_TEMP_DIRECTORY}/control")
+
+# For the last site, build or serve it
+read -r SOURCE TARGET < <(tail -n 1 "${MKDOCKER_TEMP_DIRECTORY}/control")
 if [ "${MKDOCKER_SERVE}" = 0 ]; then
-	mkdocs build -d /usr/share/nginx/html
+	echo "Building ${SOURCE} to ${TARGET}"
+	pushd "${SOURCE}"
+	mkdocs build -d "/usr/share/nginx/html/${TARGET}"
+	popd
 	if [ -x scripts/post ]; then
 		echo Running post script
-		./scripts/post
+		./scripts/post "${SCRIPT_TEMP}" "${MKDOCKER_TEMP_DIRECTORY}/control"
 	fi
 	
 	if [ -d "${MKDOCKER_VENV_DIRECTORY}" ]; then
@@ -56,5 +78,8 @@ if [ "${MKDOCKER_SERVE}" = 0 ]; then
 	
 	nginx -g "daemon off;"
 else
+	echo "Serving ${SOURCE}"
+	pushd "${SOURCE}"
 	mkdocs serve -a "0.0.0.0:80"
+	popd
 fi
